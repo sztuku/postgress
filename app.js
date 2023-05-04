@@ -21,7 +21,8 @@ app.get('/', (req, res) => {
         console.log(url)
         res.redirect(url);
     } else {
-       var oauth2=google.oauth2({auth: oAuth2Client, version:'v2'})
+        var oauth2=google.oauth2({auth: oAuth2Client, version:'v2'})
+        console.log("siema")
         oauth2.userinfo.v2.me.get(function(err,result)
         {
             let loggedUser;
@@ -40,6 +41,7 @@ app.get('/', (req, res) => {
 
 app.get('/auth/google/callback', function (req, res) {
     const code = req.query.code
+    console.log("Adad")
     if (code) {
         // Get an access token based on our OAuth code
         oAuth2Client.getToken(code, function (err, tokens) {
