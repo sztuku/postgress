@@ -39,6 +39,10 @@ app.get('/', (req, res) => {
         {
             res.write('<a href="/googlelogout">wyloguj sie</a>')
             res.end('logged by github')
+        }else if (loggedBy==='facebook')
+        {
+            res.write('<a href="/googlelogout">wyloguj sie</a>')
+            res.end('logged by facebook')
         }
 
 
@@ -92,12 +96,11 @@ app.get('/github', (req, res) => {
         // res.send('Logged in')
     }
 })
-
 app.get('/facebook', (req, res) => {
 
     const stringifiedParams = queryString.stringify({
         client_id:CLIENT_ID_FB,
-        redirect_uri: 'https://www.example.com/authenticate/facebook/',
+        redirect_uri: 'https://autentykacja.onrender.com/auth/facebook/callback/',
         scope: ['email', 'user_friends'].join(','), // comma seperated string
         response_type: 'code',
         auth_type: 'rerequest',
