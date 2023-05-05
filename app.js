@@ -6,23 +6,15 @@ const app = express()
 
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
-const REDIRECT_URL = OAuth2Data.web.redirect_uris[0]
+const REDIRECT_URL = 'https://autentykacja.onrender.com/auth/google/callback'
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 var authed = false;
-
 app.get('/', (req, res) => {
-    if (!authed) {
-        // Generate an OAuth URL and redirect there
-        const url = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: 'https://www.googleapis.com/auth/userinfo.profile'
-        });
-        console.log(url)
-        res.redirect(url);
-    } else {
+    if(authed)
+    {
         var oauth2=google.oauth2({auth: oAuth2Client, version:'v2'})
-        console.log("siema")
+
         oauth2.userinfo.v2.me.get(function(err,result)
         {
             let loggedUser;
@@ -33,9 +25,40 @@ app.get('/', (req, res) => {
                 loggedUser = result.data.name
                 console.log(loggedUser)
             }
-            res.send('Logged in: '.concat(loggedUser,'<img src="',result.data.picture,'"height="23" width="23">'))
+            res.write('<a href="/googlelogout">wyloguj sie</a>')
+            res.send('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
         })
-        res.send('Logged in')
+
+    }else
+    {
+        res.send('<a href="/google">zaloguj przez google</a>')
+
+    }
+})
+// var auth2 = gapi.auth2.getAuthInstance();
+// auth2.signOut().then(function () {
+// });
+app.get('/googlelogout', (req, res) => {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        res.redirect('/');
+    });
+})
+app.get('/google', (req, res) => {
+
+    console.log(REDIRECT_URL)
+    if (!authed) {
+        // Generate an OAuth URL and redirect there
+        const url = oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: 'https://www.googleapis.com/auth/userinfo.profile'
+        });
+        console.log(url)
+        res.redirect(url);
+    } else {
+        res.redirect('/');
+
+        // res.send('Logged in')
     }
 })
 
