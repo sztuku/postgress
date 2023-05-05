@@ -41,6 +41,8 @@ app.get('/', (req, res) => {
 // });
 app.get('/googlelogout', (req, res) => {
     authed=false
+    res.redirect('/');
+
 })
 app.get('/google', (req, res) => {
 
