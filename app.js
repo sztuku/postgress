@@ -42,8 +42,8 @@ app.get('/', (req, res) => {
 app.get('/auth/google/callback', function (req, res) {
     const code = req.query.code
     console.log("Adad")
-    var profile = oAuth2Client.currentUser.get().getBasicProfile();
-    res.send('Logged in: '.concat(profile.getName(),'<img src="',profile.getImageUrl(),'"height="23" width="23">'))
+    // var profile = oAuth2Client.currentUser.get().getBasicProfile();
+    // res.send('Logged in: '.concat(profile.getName(),'<img src="',profile.getImageUrl(),'"height="23" width="23">'))
 
     if (code) {
         // Get an access token based on our OAuth code
