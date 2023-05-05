@@ -158,25 +158,18 @@ app.get('/auth/github/callback', function (req, res) {
 });
 
 
-app.get('/auth/facebook/callback', function (req, res) {
+app.get('/auth/facebook/callback', async function (req, res) {
 
-    axios.post("https://graph.facebook.com/v4.0/oauth/access_token", {
-        client_id: CLIENT_ID_FB,
-        client_secret: FB_SECRET,
-        code: req.query.code
-    }, {
-        headers: {
-            Accept: "application/json"
-        }
-    }).then((result) => {
-        // console.log(result.data.access_token)
-        // res.send("you are authorized " + result.data.access_token)
-        authed=true
+    const resp = await axios.get('https://graph.facebook.com/oauth/access_token\n' +
+        '  ?client_id=547465797537123\n' +
+        '  &client_secret=7ea001348d6e654bd21c62cc5d5678f7\n' +
+        '  &grant_type=client_credentials'
+    );
+   if(resp)
+   {
+       authed=true
         loggedBy='facebook'
-    }).catch((err) => {
-        console.log(err);
-    })
-
+   }
     res.redirect('/')
 
 });
