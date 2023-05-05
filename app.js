@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 // auth2.signOut().then(function () {
 // });
 app.get('/googlelogout', (req, res) => {
-    var auth2 = gapi.auth2.getAuthInstance();
+    var auth2 = google.oauth2.getAuthInstance();
     auth2.signOut().then(function () {
         res.redirect('/');
     });
