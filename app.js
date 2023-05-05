@@ -54,7 +54,9 @@ app.get('/', (req, res) => {
 app.get('/googlelogout', (req, res) => {
     authed=false
     loggedBy=''
+
     res.redirect('/');
+
 
 })
 app.get('/google', (req, res) => {
@@ -81,7 +83,7 @@ app.get('/github', (req, res) => {
     console.log(REDIRECT_URL)
     if (!authed) {
         // Generate an OAuth URL and redirect there
-        res.redirect(`https://github.com/login/oauth/authorize?client_id=4f97a28ec1431c6b9fff`);
+        res.redirect(`https://github.com/login/oauth/authorize?client_id=4f97a28ec1431c6b9fff&prompt=consent`);
     } else {
         res.redirect('/');
 
