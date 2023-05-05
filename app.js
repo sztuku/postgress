@@ -100,7 +100,7 @@ app.get('/facebook', (req, res) => {
 
     const stringifiedParams = queryString.stringify({
         client_id:CLIENT_ID_FB,
-        redirect_uri: 'https://autentykacja.onrender.com/auth/facebook/callback/',
+        redirect_uri: 'https://autentykacja.onrender.com/auth/facebook/callback',
         scope: ['email', 'user_friends'].join(','), // comma seperated string
         response_type: 'code',
         auth_type: 'rerequest',
@@ -169,7 +169,7 @@ app.get('/auth/facebook/callback', async (req, res) =>{
         const accessTokenUrl = 'https://graph.facebook.com/v4.0/oauth/access_token?' +
             `client_id=${CLIENT_ID_FB}&` +
             `client_secret=${FB_SECRET}&` +
-            `redirect_uri='https://autentykacja.onrender.com/auth/facebook/callback/'&` +
+            `redirect_uri='https://autentykacja.onrender.com/auth/facebook/callback'&` +
             `code=${encodeURIComponent(authCode)}`;
 
         // Make an API request to exchange `authCode` for an access token
