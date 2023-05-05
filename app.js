@@ -26,7 +26,8 @@ app.get('/', (req, res) => {
                 console.log(loggedUser)
             }
             res.write('<a href="/googlelogout">wyloguj sie</a>')
-            res.send('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
+            res.end('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
+
         })
 
     }else
@@ -39,10 +40,7 @@ app.get('/', (req, res) => {
 // auth2.signOut().then(function () {
 // });
 app.get('/googlelogout', (req, res) => {
-    var auth2 = google.oauth2.getAuthInstance();
-    auth2.signOut().then(function () {
-        res.redirect('/');
-    });
+    authed=false
 })
 app.get('/google', (req, res) => {
 
