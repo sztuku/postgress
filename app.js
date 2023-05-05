@@ -9,7 +9,8 @@ const app = express()
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDIRECT_URL = 'https://autentykacja.onrender.com/auth/google/callback'
-
+const CLIENT_ID_FB='547465797537123'
+const FB_SECRET='7ea001348d6e654bd21c62cc5d5678f7'
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 var authed = false;
 var loggedBy=''
@@ -44,7 +45,8 @@ app.get('/', (req, res) => {
     }else
     {
         res.send('<a href="/google">zaloguj przez google</a><br/>' +
-            '<a href="/github">zaloguj przez github</a>')
+            '<a href="/github">zaloguj przez github</a><br/>'+
+            '<a href="/facebook">zaloguj przez facebook</a>')
 
     }
 })
@@ -90,6 +92,21 @@ app.get('/github', (req, res) => {
         // res.send('Logged in')
     }
 })
+
+app.get('/facebook', (req, res) => {
+
+    const stringifiedParams = queryString.stringify({
+        client_id:CLIENT_ID_FB,
+        redirect_uri: 'https://www.example.com/authenticate/facebook/',
+        scope: ['email', 'user_friends'].join(','), // comma seperated string
+        response_type: 'code',
+        auth_type: 'rerequest',
+        display: 'popup',
+    });
+
+    const facebookLoginUrl = `https://www.facebook.com/v4.0/dialog/oauth?${stringifiedParams}`;
+    res.redirect(facebookLoginUrl);
+})
 app.get('/auth/google/callback', function (req, res) {
     const code = req.query.code
     console.log("Adad")
@@ -129,6 +146,30 @@ app.get('/auth/github/callback', function (req, res) {
         // res.send("you are authorized " + result.data.access_token)
         authed=true
         loggedBy='github'
+    }).catch((err) => {
+        console.log(err);
+    })
+
+    res.redirect('/')
+
+});
+
+
+app.get('/auth/facebook/callback', function (req, res) {
+
+    axios.post("https://graph.facebook.com/v4.0/oauth/access_token", {
+        client_id: CLIENT_ID_FB,
+        client_secret: FB_SECRET,
+        code: req.query.code
+    }, {
+        headers: {
+            Accept: "application/json"
+        }
+    }).then((result) => {
+        // console.log(result.data.access_token)
+        // res.send("you are authorized " + result.data.access_token)
+        authed=true
+        loggedBy='facebook'
     }).catch((err) => {
         console.log(err);
     })
