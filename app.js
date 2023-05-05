@@ -166,10 +166,10 @@ app.get('/auth/facebook/callback', async (req, res) =>{
         // Build up the URL for the API request. `client_id`, `client_secret`,
         // `code`, **and** `redirect_uri` are all required. And `redirect_uri`
         // must match the `redirect_uri` in the dialog URL from Route 1.
-        const accessTokenUrl = 'https://graph.facebook.com/v6.0/oauth/access_token?' +
+        const accessTokenUrl = 'https://graph.facebook.com/v4.0/oauth/access_token?' +
             `client_id=${CLIENT_ID_FB}&` +
             `client_secret=${FB_SECRET}&` +
-            `redirect_uri=${encodeURIComponent('https://autentykacja.onrender.com/auth/facebook/callback')}&` +
+            `redirect_uri='https://autentykacja.onrender.com/auth/facebook/callback/'&` +
             `code=${encodeURIComponent(authCode)}`;
 
         // Make an API request to exchange `authCode` for an access token
