@@ -158,19 +158,31 @@ app.get('/auth/github/callback', function (req, res) {
 });
 
 
-app.get('/auth/facebook/callback', async function (req, res) {
+app.get('/auth/facebook/callback', async (req, res) =>{
 
-    const resp = await axios.get('https://graph.facebook.com/oauth/access_token\n' +
-        '  ?client_id=547465797537123\n' +
-        '  &client_secret=7ea001348d6e654bd21c62cc5d5678f7\n' +
-        '  &grant_type=client_credentials'
-    );
-   if(resp)
-   {
-       authed=true
+    try {
+        const authCode = req.query.code;
+
+        // Build up the URL for the API request. `client_id`, `client_secret`,
+        // `code`, **and** `redirect_uri` are all required. And `redirect_uri`
+        // must match the `redirect_uri` in the dialog URL from Route 1.
+        const accessTokenUrl = 'https://graph.facebook.com/v6.0/oauth/access_token?' +
+            `client_id=${CLIENT_ID_FB}&` +
+            `client_secret=${FB_SECRET}&` +
+            `redirect_uri=${encodeURIComponent('https://autentykacja.onrender.com/auth/facebook/callback')}&` +
+            `code=${encodeURIComponent(authCode)}`;
+
+        // Make an API request to exchange `authCode` for an access token
+        const accessToken = await axios.get(accessTokenUrl).then(res => res.data['access_token']);
+        // Store the token in memory for now. Later we'll store it in the database.
+        console.log('Access token is', accessToken);
+        authed=true
         loggedBy='facebook'
-   }
-    res.redirect('/')
+        res.redirect(`/`);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: err.response.data || err.message });
+    }
 
 });
 
