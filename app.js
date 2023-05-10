@@ -25,11 +25,11 @@ async function getPgVersion() {
 }
 
 
-getPgVersion();
 
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDIRECT_URL = 'https://autentykacja.onrender.com/auth/google/callback'
+
 const CLIENT_ID_FB='547465797537123'
 const FB_SECRET='7ea001348d6e654bd21c62cc5d5678f7'
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
@@ -38,12 +38,26 @@ var loggedBy=''
 
 
 const getUsers = (request, response) => { console.log('Pobieram dane ...');
-    sql.query('SELECT * FROM public."Users"', (error, res) => { if (error) {
+    sql.query('SELECT * FROM Users', (error, res) => { if (error) {
         throw error }
         console.log('Dostałem ...'); for (let row of res.rows) {
             console.log(JSON.stringify(row));
             res.write(JSON.stringify(row))
         }
+    }) }
+const updateUsers = (request, response,name) => {
+
+    sql.query('SELECT * FROM Users where id=${name}', (error, res) => { if (error) {
+        throw error }
+        console.log('Dostałem ...'); for (let row of res.rows) {
+            console.log(JSON.stringify(row));
+            res.write(JSON.stringify(row))
+        }
+    })
+
+    sql.query('INSERT INTO Users(name,counter) values(${name},${1})"', (error, res) => { if (error) {
+        throw error }
+        console.log('Dodano uzytkownika');
     }) }
 
 app.get('/', (req, res) => {
@@ -63,7 +77,7 @@ app.get('/', (req, res) => {
                     loggedUser = result.data.name
                     console.log(loggedUser)
                 }
-                getUsers(req,res)
+                // getUsers(req,res)
                 res.write('<a href="/googlelogout">wyloguj sie</a>')
                 res.write('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
 
