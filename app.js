@@ -6,6 +6,27 @@ const { default: axios } = require("axios");
 
 const app = express()
 
+
+// Do not expose your Neon credentials to the browser
+// .env
+
+// app.js
+const postgres = require('postgres');
+require('dotenv').config();
+
+const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+const URL = `postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?options=project%3D${ENDPOINT_ID}`;
+
+const sql = postgres(URL, { ssl: 'require' });
+
+async function getPgVersion() {
+    const result = await sql`select version()`;
+    console.log(result);
+}
+
+
+getPgVersion();
+
 const CLIENT_ID = OAuth2Data.web.client_id;
 const CLIENT_SECRET = OAuth2Data.web.client_secret;
 const REDIRECT_URL = 'https://autentykacja.onrender.com/auth/google/callback'
@@ -14,6 +35,17 @@ const FB_SECRET='7ea001348d6e654bd21c62cc5d5678f7'
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 var authed = false;
 var loggedBy=''
+
+
+const getUsers = (request, response) => { console.log('Pobieram dane ...');
+    sql.query('SELECT * FROM public."Users"', (error, res) => { if (error) {
+        throw error }
+        console.log('Dostałem ...'); for (let row of res.rows) {
+            console.log(JSON.stringify(row));
+            res.write(JSON.stringify(row))
+        }
+    }) }
+
 app.get('/', (req, res) => {
     if(authed)
     {
@@ -31,9 +63,12 @@ app.get('/', (req, res) => {
                     loggedUser = result.data.name
                     console.log(loggedUser)
                 }
+                getUsers(req,res)
                 res.write('<a href="/googlelogout">wyloguj sie</a>')
-                res.end('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
+                res.write('Logged in: '.concat(loggedUser,'   <img src="',result.data.picture,'"height="23" width="23">'))
 
+
+                res.end('');
             })
         }else if (loggedBy==='github')
         {
@@ -163,18 +198,14 @@ app.get('/auth/facebook/callback', async (req, res) =>{
     try {
         const authCode = req.query.code;
 
-        // Build up the URL for the API request. `client_id`, `client_secret`,
-        // `code`, **and** `redirect_uri` are all required. And `redirect_uri`
-        // must match the `redirect_uri` in the dialog URL from Route 1.
         const accessTokenUrl = 'https://graph.facebook.com/v4.0/oauth/access_token?' +
             `client_id=${CLIENT_ID_FB}&` +
             `client_secret=${FB_SECRET}&` +
             `redirect_uri='https://autentykacja.onrender.com/auth/facebook/callback'&` +
             `code=${encodeURIComponent(authCode)}`;
 
-        // Make an API request to exchange `authCode` for an access token
         const accessToken = await axios.get(accessTokenUrl).then(res => res.data['access_token']);
-        // Store the token in memory for now. Later we'll store it in the database.
+
         console.log('Access token is', accessToken);
         authed=true
         loggedBy='facebook'
