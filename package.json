@@ -19,6 +19,7 @@
     "latest": "^0.2.0",
     "n": "^9.1.0",
     "postgres": "^3.3.4",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "stable": "^0.1.8"
   }
 }
