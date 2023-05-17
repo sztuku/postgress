@@ -46,7 +46,7 @@ var name=''
  }
 async function updateUsers (name) {
     var dbRes = await sql`SELECT * FROM Users where name=${name}`
-    console.log(dbRes[0].counter+1)
+    // console.log(dbRes[0].counter+1)
     alert("connected to dataBase")
     if (dbRes.length > 0) {
         await sql`Update Users set counter=${dbRes[0].counter+1} where name=${name} `
